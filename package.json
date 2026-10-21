@@ -1,0 +1,23 @@
+{
+  "name": "technolab",
+  "version": "0.1.0",
+  "description": "Müziğe göre tepki veren techno arena ışık sahnesi (Next.js, Canvas, Web Audio API)",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "next dev -p 3067",
+    "build": "next build",
+    "start": "next start -p 3067"
+  },
+  "dependencies": {
+    "next": "^15.5.28",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^6.0.3"
+  }
+}
