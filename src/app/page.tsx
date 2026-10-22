@@ -10,6 +10,12 @@ import { AudioEngine, type SourceKind } from "../lib/audio";
 import { forgetPlan, LEARN_COVERAGE, loadPlan, Recorder, savePlan } from "../lib/memory";
 import { analyze, decodeMono } from "../lib/offline";
 
+/**
+ * Geri bildirim yerelde (dev) açık. Yayında mesajları saklayacak kalıcı bir depo bağlanana kadar
+ * kapalı kalır; depo hazır olunca NEXT_PUBLIC_FEEDBACK=1 ile açılır.
+ */
+const FEEDBACK_ENABLED = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_FEEDBACK === "1";
+
 function parseYouTubeId(input: string): string | null {
   try {
     const u = new URL(input.trim());
@@ -263,9 +269,11 @@ export default function Page() {
       {started && (
         <>
           <div className={`brand ${uiVisible ? "" : "hidden"}`}>Technolab</div>
-          <div className={`fb-wrap ${uiVisible ? "" : "hidden"}`}>
-            <Feedback engine={engine} videoId={videoId} />
-          </div>
+          {FEEDBACK_ENABLED && (
+            <div className={`fb-wrap ${uiVisible ? "" : "hidden"}`}>
+              <Feedback engine={engine} videoId={videoId} />
+            </div>
+          )}
 
           <section className={`dock ${uiVisible ? "" : "hidden"}`}>
             <div className="row">

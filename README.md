@@ -54,7 +54,7 @@ Birkaç tasarım kararı:
 
 - Testlerin çoğu sentetik parçalarla yapıldı, gerçek techno setlerinde tüm alt türler denenmedi.
 - Sekme sesi mobilde yok.
-- Yayında geri bildirim için kalıcı bir depo bağlı değil (dosya sistemi yazılamaz).
+- Geri bildirim formu yayında kapalı: mesajları saklayacak kalıcı bir depo henüz bağlı değil.
 - YouTube oynatıcı ile uçtan uca davranış (reklam, ileri sarma) sınırlı test edildi.
 
 ## Müzik ve telif
