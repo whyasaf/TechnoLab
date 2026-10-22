@@ -9,6 +9,28 @@ const MAX_MSG = 500;
 
 const clip = (v: unknown, n: number) => (typeof v === "string" ? v.trim().slice(0, n) : "");
 
+/**
+ * Kalıcı depo: Vercel'de Upstash Redis (REST) bağlıysa onu kullanır; yerelde dosya.
+ * Env adları Vercel'in Upstash entegrasyonunun eklediklerine göre (KV_*) ve Upstash'in kendi adları desteklenir.
+ */
+const redisUrl = () => process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
+const redisToken = () => process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
+const useRedis = () => !!(redisUrl() && redisToken());
+/** Yerelde dosya yazılabilir; yayında yalnızca Redis bağlıysa saklanabilir */
+const storageReady = () => process.env.NODE_ENV !== "production" || useRedis();
+const KEY = "technolab:feedback";
+
+async function redis(cmd: (string | number)[]) {
+  const r = await fetch(redisUrl()!, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${redisToken()}`, "Content-Type": "application/json" },
+    body: JSON.stringify(cmd),
+    cache: "no-store",
+  });
+  if (!r.ok) throw new Error("redis " + r.status);
+  return ((await r.json()) as { result: unknown }).result;
+}
+
 /** Basit IP başına sınır: dakikada en fazla 5 gönderim (bellekte, sunucu yeniden başlayınca sıfırlanır) */
 const hits = new Map<string, number[]>();
 function limited(ip: string) {
@@ -61,19 +83,30 @@ export async function POST(req: Request) {
     },
   };
 
+  if (!storageReady()) return Response.json({ error: "Şu an kaydedilemedi." }, { status: 503 });
   try {
-    await mkdir(path.dirname(FILE), { recursive: true });
-    await appendFile(FILE, JSON.stringify(entry) + "\n");
+    if (useRedis()) {
+      await redis(["LPUSH", KEY, JSON.stringify(entry)]);
+      await redis(["LTRIM", KEY, 0, 999]); // en yeni 1000 kayıt
+    } else {
+      await mkdir(path.dirname(FILE), { recursive: true });
+      await appendFile(FILE, JSON.stringify(entry) + "\n");
+    }
   } catch {
-    // Yayında dosya sistemi yazılamaz: kalıcı bir depo bağlanana kadar kaydedilemez
     return Response.json({ error: "Şu an kaydedilemedi." }, { status: 503 });
   }
   return Response.json({ ok: true });
 }
 
 export async function GET(req: Request) {
+  // Form gösterilsin mi? Saklayacak depo hazırsa evet. Veri döndürmez, anahtar gerekmez.
+  if (new URL(req.url).searchParams.has("status")) return Response.json({ enabled: storageReady() });
   if (!canRead(req)) return Response.json({ error: "Yetkisiz." }, { status: 401 });
   try {
+    if (useRedis()) {
+      const rows = (await redis(["LRANGE", KEY, 0, 499])) as string[];
+      return Response.json({ items: rows.map((r) => JSON.parse(r)) });
+    }
     const raw = await readFile(FILE, "utf8");
     const items = raw
       .split("\n")

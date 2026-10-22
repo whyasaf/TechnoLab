@@ -10,12 +10,6 @@ import { AudioEngine, type SourceKind } from "../lib/audio";
 import { forgetPlan, LEARN_COVERAGE, loadPlan, Recorder, savePlan } from "../lib/memory";
 import { analyze, decodeMono } from "../lib/offline";
 
-/**
- * Geri bildirim yerelde (dev) açık. Yayında mesajları saklayacak kalıcı bir depo bağlanana kadar
- * kapalı kalır; depo hazır olunca NEXT_PUBLIC_FEEDBACK=1 ile açılır.
- */
-const FEEDBACK_ENABLED = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_FEEDBACK === "1";
-
 function parseYouTubeId(input: string): string | null {
   try {
     const u = new URL(input.trim());
@@ -50,10 +44,20 @@ export default function Page() {
   const [status, setStatus] = useState("");
   const [uiVisible, setUiVisible] = useState(true);
   const [canTab, setCanTab] = useState(false);
+  // Geri bildirim: yerelde açık; yayında yalnızca mesajları saklayacak depo bağlıysa görünür
+  const [feedbackOn, setFeedbackOn] = useState(process.env.NODE_ENV !== "production");
   const [saved, setSaved] = useState(false);
   const [learnPct, setLearnPct] = useState<number | null>(null);
   const recRef = useRef<Recorder | null>(null);
   const clockRef = useRef<YouTubeClock | null>(null);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production") return;
+    fetch("/api/feedback?status=1")
+      .then((r) => r.json())
+      .then((d: { enabled?: boolean }) => setFeedbackOn(!!d.enabled))
+      .catch(() => setFeedbackOn(false));
+  }, []);
 
   useEffect(() => {
     setCanTab(typeof navigator.mediaDevices?.getDisplayMedia === "function");
@@ -269,7 +273,7 @@ export default function Page() {
       {started && (
         <>
           <div className={`brand ${uiVisible ? "" : "hidden"}`}>Technolab</div>
-          {FEEDBACK_ENABLED && (
+          {feedbackOn && (
             <div className={`fb-wrap ${uiVisible ? "" : "hidden"}`}>
               <Feedback engine={engine} videoId={videoId} />
             </div>
