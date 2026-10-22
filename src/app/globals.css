@@ -88,3 +88,8 @@ input[type="range"] { flex: 1; accent-color: #e9eaf0; }
 .msgs-head em { font-style: normal; color: #8aa2ff; }
 .msgs li p { margin: 8px 0 6px; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; }
 .msgs small { opacity: 0.5; font-size: 0.7rem; }
+.priv h2 { font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; margin: 28px 0 8px; opacity: 0.8; }
+.priv p, .priv li { font-size: 0.88rem; line-height: 1.65; opacity: 0.85; }
+.priv ul { display: block; padding-left: 18px; list-style: disc; }
+.priv li { margin-bottom: 8px; border: 0; background: none; padding: 0; }
+.priv a, .fb-fine a, .fine a { color: #8aa2ff; text-decoration: underline; }

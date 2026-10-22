@@ -19,6 +19,7 @@ const useRedis = () => !!(redisUrl() && redisToken());
 /** Yerelde dosya yazılabilir; yayında yalnızca Redis bağlıysa saklanabilir */
 const storageReady = () => process.env.NODE_ENV !== "production" || useRedis();
 const KEY = "technolab:feedback";
+const RETENTION_SECONDS = 180 * 24 * 60 * 60;
 
 async function redis(cmd: (string | number)[]) {
   const r = await fetch(redisUrl()!, {
@@ -72,7 +73,6 @@ export async function POST(req: Request) {
     vote,
     reason,
     message,
-    email: clip(body.email, 120),
     ctx: {
       source: clip(ctx.source, 20),
       bpm: typeof ctx.bpm === "number" ? Math.round(ctx.bpm) : null,
@@ -88,6 +88,7 @@ export async function POST(req: Request) {
     if (useRedis()) {
       await redis(["LPUSH", KEY, JSON.stringify(entry)]);
       await redis(["LTRIM", KEY, 0, 999]); // en yeni 1000 kayıt
+      await redis(["EXPIRE", KEY, RETENTION_SECONDS]); // son yazmadan 180 gün sonra tümü silinir
     } else {
       await mkdir(path.dirname(FILE), { recursive: true });
       await appendFile(FILE, JSON.stringify(entry) + "\n");

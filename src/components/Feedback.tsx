@@ -17,7 +17,6 @@ export default function Feedback({ engine, videoId }: Props) {
   const [vote, setVote] = useState<"up" | "down" | null>(null);
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
-  const [email, setEmail] = useState("");
   const [trap, setTrap] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [err, setErr] = useState("");
@@ -31,7 +30,7 @@ export default function Feedback({ engine, videoId }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          vote, reason, message, email, website: trap,
+          vote, reason, message, website: trap,
           ctx: {
             source: engine.kind, bpm: f.bpm, sensitivity: engine.sensitivity, video: videoId ?? "",
             ua: navigator.userAgent,
@@ -52,7 +51,6 @@ export default function Feedback({ engine, videoId }: Props) {
       setVote(null);
       setReason("");
       setMessage("");
-      setEmail("");
       setState("idle");
     }
   };
@@ -65,7 +63,6 @@ export default function Feedback({ engine, videoId }: Props) {
       setVote(null);
       setReason("");
       setMessage("");
-      setEmail("");
       setState("idle");
     }, 2200);
     return () => clearTimeout(t);
@@ -106,13 +103,6 @@ export default function Feedback({ engine, videoId }: Props) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
               />
-              <input
-                type="email"
-                placeholder="E-posta (isteğe bağlı)"
-                maxLength={120}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
               {/* Bot tuzağı: insanlara görünmez */}
               <input
                 className="fb-trap"
@@ -124,8 +114,11 @@ export default function Feedback({ engine, videoId }: Props) {
                 onChange={(e) => setTrap(e.target.value)}
               />
               <p className="fb-fine">
-                Yazdığın mesajla birlikte kullandığın kaynak, BPM ve tarayıcı bilgisi gönderilir. Başka bir şey
-                toplanmaz. E-posta vermezsen cevap veremem.
+                Mesaja kişisel bilgi (telefon, adres, e-posta) yazma; cevap vermiyorum. Mesajla birlikte kaynak türü,
+                BPM ve tarayıcı bilgisi gönderilir.{" "}
+                <a href="/gizlilik" target="_blank" rel="noopener">
+                  Aydınlatma metni
+                </a>
               </p>
               {state === "error" && <p className="error">{err}</p>}
               <button className="fb-send" onClick={send} disabled={state === "sending" || (!vote && !message.trim())}>

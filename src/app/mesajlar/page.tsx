@@ -7,7 +7,7 @@ type Item = {
   vote: "up" | "down" | null;
   reason: string;
   message: string;
-  email: string;
+  email?: string;
   ctx: { source: string; bpm: number | null; sensitivity: number | null; video: string; section: string; ua: string };
 };
 
