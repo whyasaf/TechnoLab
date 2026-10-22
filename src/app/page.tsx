@@ -10,6 +10,8 @@ import { AudioEngine, type SourceKind } from "../lib/audio";
 import { forgetPlan, LEARN_COVERAGE, loadPlan, Recorder, savePlan } from "../lib/memory";
 import { analyze, decodeMono } from "../lib/offline";
 
+const WELCOME_KEY = "technolab.welcome.v1";
+
 function parseYouTubeId(input: string): string | null {
   try {
     const u = new URL(input.trim());
@@ -48,6 +50,7 @@ export default function Page() {
   const [feedbackOn, setFeedbackOn] = useState(process.env.NODE_ENV !== "production");
   // Örnek parça (isteğe bağlı): public/samples/demo.mp3 + demo.json varsa "Örnek" butonu çıkar
   const [sample, setSample] = useState<{ title: string; artist: string; license: string; url?: string } | null>(null);
+  const [welcome, setWelcome] = useState(false);
   const [saved, setSaved] = useState(false);
   const [learnPct, setLearnPct] = useState<number | null>(null);
   const recRef = useRef<Recorder | null>(null);
@@ -121,7 +124,34 @@ export default function Page() {
     engine.init();
     engine.stop();
     setStarted(true);
+    // İlk ziyarette (tarayıcı başına bir kez) karşılama penceresi
+    try {
+      if (!localStorage.getItem(WELCOME_KEY)) setWelcome(true);
+    } catch {
+      /* depolama kapalıysa pencere her seferinde çıkmasın */
+    }
   };
+
+  const closeWelcome = (openFeedback = false) => {
+    setWelcome(false);
+    try {
+      localStorage.setItem(WELCOME_KEY, "1");
+    } catch {
+      /* yok say */
+    }
+    if (openFeedback) {
+      poke();
+      window.dispatchEvent(new Event("technolab:feedback"));
+    }
+  };
+
+  useEffect(() => {
+    if (!welcome) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeWelcome();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [welcome]);
 
   const connectMic = () =>
     run(async () => {
@@ -420,6 +450,37 @@ export default function Page() {
 
           {videoId && <YouTubePlayer key={videoId} videoId={videoId} onReady={onPlayerReady} />}
         </>
+      )}
+
+      {welcome && (
+        <div className="welcome" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+          <div className="welcome-box">
+            <p className="eyebrow">İlk deneme sürümü</p>
+            <h2 id="welcome-title">İlk deneme bizden, geri bildirim senden</h2>
+            <p>
+              Technolab yeni yayında: ışıklar, ses algılama ve örnek parça hâlâ denenerek geliştiriliyor. Bir şey ritme
+              uymazsa ya da aklına bir fikir gelirse bize yaz, gerçekten okuyoruz.
+            </p>
+            <div className="welcome-actions">
+              {sample && (
+                <button
+                  className="welcome-go"
+                  autoFocus
+                  onClick={() => {
+                    closeWelcome();
+                    loadSample();
+                  }}
+                >
+                  Örnek parçayı dene
+                </button>
+              )}
+              {feedbackOn && <button onClick={() => closeWelcome(true)}>Geri bildirim bırak</button>}
+              <button className={sample ? "" : "welcome-go"} autoFocus={!sample} onClick={() => closeWelcome()}>
+                {sample ? "Kendim seçeceğim" : "Başla"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       <audio ref={audioRef} controls className={`file-player ${kind === "file" && uiVisible ? "" : "hidden"}`} />

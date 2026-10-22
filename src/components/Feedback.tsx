@@ -55,6 +55,13 @@ export default function Feedback({ engine, videoId }: Props) {
     }
   };
 
+  // Karşılama penceresindeki "Geri bildirim bırak" butonu paneli buradan açar
+  useEffect(() => {
+    const onOpen = () => setOpen(true);
+    window.addEventListener("technolab:feedback", onOpen);
+    return () => window.removeEventListener("technolab:feedback", onOpen);
+  }, []);
+
   // Gönderilince teşekkür mesajı kısa süre görünür, sonra panel kendiliğinden kapanıp sıfırlanır
   useEffect(() => {
     if (state !== "done") return;
