@@ -59,7 +59,7 @@ Birkaç tasarım kararı:
 
 ## Müzik ve telif
 
-Bu depoda müzik dosyası yok. YouTube videoları yalnızca resmî gömülü oynatıcıdan çalar, sitede barındırılmaz. Kullanıcının seçtiği dosyalar bilgisayarından çıkmaz, tarayıcıda analiz edilir.
+Depodaki tek ses dosyası, "Örnek" butonu için kullanılan `public/samples/demo.mp3` (Sub_Clair — Hard Techno, Pixabay Content License). Başka müzik dosyası yok. YouTube videoları yalnızca resmî gömülü oynatıcıdan çalar, sitede barındırılmaz. Kullanıcının seçtiği dosyalar bilgisayarından çıkmaz, tarayıcıda analiz edilir.
 
 ## Geliştirme
 
