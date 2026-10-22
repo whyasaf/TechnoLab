@@ -27,9 +27,9 @@ export default function Privacy() {
         </li>
         <li>Çerez kullanılmaz, reklam ya da analiz/takip aracı yoktur.</li>
         <li>
-          <b>Teknik kayıtlar:</b> Barındırma sağlayıcısı (Vercel), hizmetin işleyişi için IP adresi gibi standart sunucu
-          kayıtlarını kendi sistemlerinde tutabilir. Form kötüye kullanımını sınırlamak için IP adresi yalnızca kısa
-          süreliğine bellekte sayılır, mesajla birlikte saklanmaz.
+          <b>Teknik kayıtlar:</b> Siteyi barındıran hizmet sağlayıcı, işleyiş için IP adresi gibi standart sunucu
+          kayıtlarını tutabilir. Form kötüye kullanımına karşı IP adresi yalnızca geçici sayılır, mesajla birlikte
+          saklanmaz.
         </li>
       </ul>
 
@@ -37,13 +37,12 @@ export default function Privacy() {
       <p>Geri bildirimler yalnızca siteyi geliştirmek için okunur.</p>
 
       <h2>Saklama süresi</h2>
-      <p>En yeni 1000 mesaj tutulur; son mesajdan 180 gün sonra tüm kayıtlar otomatik silinir.</p>
+      <p>Mesajlar en fazla 180 gün saklanır, ardından otomatik silinir.</p>
 
       <h2>Aktarım</h2>
       <p>
-        Site Vercel üzerinde yayınlanır, mesajlar Upstash (Redis) üzerinde, Avrupa’daki (Frankfurt) bir sunucuda saklanır.
-        Bu hizmetler yurt dışında bulunduğundan verilerin yurt dışında işlenmesi söz konusudur. Veriler satılmaz ve
-        reklam amacıyla kullanılmaz.
+        Site ve mesajlar, yurt dışında bulunan bulut hizmeti sağlayıcıları üzerinde barındırılır; bu nedenle verilerin
+        yurt dışında işlenmesi söz konusudur. Veriler üçüncü kişilere satılmaz ve reklam amacıyla kullanılmaz.
       </p>
 
       <h2>Haklarınız</h2>

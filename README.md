@@ -54,7 +54,7 @@ Birkaç tasarım kararı:
 
 - Testlerin çoğu sentetik parçalarla yapıldı, gerçek techno setlerinde tüm alt türler denenmedi.
 - Sekme sesi mobilde yok.
-- Geri bildirim formu, yayında yalnızca mesajları saklayacak depo (Upstash Redis) bağlıysa görünür.
+- Geri bildirim formu, yayında yalnızca mesajları saklayacak depo bağlıysa görünür.
 - YouTube oynatıcı ile uçtan uca davranış (reklam, ileri sarma) sınırlı test edildi.
 
 ## Müzik ve telif
