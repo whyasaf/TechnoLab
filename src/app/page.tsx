@@ -260,12 +260,17 @@ export default function Page() {
               Gir
             </button>
             <p className="fine">
-              Müzik sitede saklanmaz: YouTube&apos;dan gömülü oynar ya da dosyan bilgisayarında kalır.{" "}
-              <a href="/gizlilik">Gizlilik</a>
+              Müzik sitede saklanmaz: YouTube&apos;dan gömülü oynar ya da dosyan bilgisayarında kalır.
             </p>
             <p className="warn">
               Ani ışık patlamaları içerir. Hızlı strobe varsayılan olarak kapalı; ışığa duyarlı epilepsi riski varsa
               açma.
+            </p>
+            <p className="credit">
+              © 2026 whyasaf · <a href="/gizlilik">Gizlilik</a> ·{" "}
+              <a href="https://github.com/whyasaf/TechnoLab" target="_blank" rel="noopener noreferrer">
+                GitHub
+              </a>
             </p>
           </div>
         </div>

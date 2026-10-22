@@ -93,3 +93,6 @@ input[type="range"] { flex: 1; accent-color: #e9eaf0; }
 .priv ul { display: block; padding-left: 18px; list-style: disc; }
 .priv li { margin-bottom: 8px; border: 0; background: none; padding: 0; }
 .priv a, .fb-fine a, .fine a { color: #8aa2ff; text-decoration: underline; }
+.gate .credit { margin: 6px 0 0; font-size: 0.68rem; letter-spacing: 0.08em; opacity: 0.45; }
+.gate .credit a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.gate .credit a:hover { opacity: 1; color: #8aa2ff; }

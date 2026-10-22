@@ -4,6 +4,8 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Technolab",
   description: "Müziğe göre tepki veren techno kulüp ışık şovu.",
+  authors: [{ name: "whyasaf", url: "https://github.com/whyasaf" }],
+  creator: "whyasaf",
 };
 
 export const viewport: Viewport = {
