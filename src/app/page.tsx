@@ -126,7 +126,9 @@ export default function Page() {
     setStarted(true);
     // İlk ziyarette (tarayıcı başına bir kez) karşılama penceresi
     try {
-      if (!localStorage.getItem(WELCOME_KEY)) setWelcome(true);
+      // ?welcome ile her seferinde göster (deneme / kontrol için)
+      const force = new URLSearchParams(window.location.search).has("welcome");
+      if (force || !localStorage.getItem(WELCOME_KEY)) setWelcome(true);
     } catch {
       /* depolama kapalıysa pencere her seferinde çıkmasın */
     }
