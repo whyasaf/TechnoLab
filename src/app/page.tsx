@@ -46,6 +46,8 @@ export default function Page() {
   const [canTab, setCanTab] = useState(false);
   // Geri bildirim: yerelde açık; yayında yalnızca mesajları saklayacak depo bağlıysa görünür
   const [feedbackOn, setFeedbackOn] = useState(process.env.NODE_ENV !== "production");
+  // Örnek parça (isteğe bağlı): public/samples/demo.mp3 + demo.json varsa "Örnek" butonu çıkar
+  const [sample, setSample] = useState<{ title: string; artist: string; license: string; url?: string } | null>(null);
   const [saved, setSaved] = useState(false);
   const [learnPct, setLearnPct] = useState<number | null>(null);
   const recRef = useRef<Recorder | null>(null);
@@ -57,6 +59,13 @@ export default function Page() {
       .then((r) => r.json())
       .then((d: { enabled?: boolean }) => setFeedbackOn(!!d.enabled))
       .catch(() => setFeedbackOn(false));
+  }, []);
+
+  useEffect(() => {
+    fetch("/samples/demo.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d && typeof d.title === "string" && setSample(d))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -149,6 +158,14 @@ export default function Page() {
       }
     });
   };
+
+  const loadSample = () =>
+    run(async () => {
+      setStatus("Örnek parça yükleniyor…");
+      const res = await fetch("/samples/demo.mp3");
+      if (!res.ok) throw new Error("Örnek parça bulunamadı.");
+      onFile(new File([await res.blob()], "demo.mp3", { type: "audio/mpeg" }));
+    });
 
   const tap = () => {
     engine.tap();
@@ -299,6 +316,11 @@ export default function Page() {
                 Dosya
                 <input type="file" accept="audio/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />
               </label>
+              {sample && (
+                <button onClick={loadSample} title="Hazır örnek parçayla dene">
+                  Örnek
+                </button>
+              )}
               <button className={kind === "clock" ? "on" : ""} onClick={tap} title="Ritme dokun">
                 Tap{kind === "clock" ? ` ${bpm}` : ""}
               </button>
@@ -314,6 +336,19 @@ export default function Page() {
             {diag && kind !== "clock" && kind !== "off" && <DiagStrip engine={engine} />}
             {kind === "mic" && <p className="note">Müzik hoparlörden çalmalı.</p>}
             {status && <p className="note">{status}</p>}
+            {sample && kind === "file" && (
+              <p className="note">
+                Örnek: {sample.title} — {sample.artist} ({sample.license})
+                {sample.url && (
+                  <>
+                    {" · "}
+                    <a href={sample.url} target="_blank" rel="noopener noreferrer">
+                      kaynak
+                    </a>
+                  </>
+                )}
+              </p>
+            )}
             {learnPct !== null && !saved && <p className="note">Öğreniliyor: %{learnPct}</p>}
 
             <div className="row">
